@@ -1,0 +1,77 @@
+{{define "content"}}
+    <div class="main-content" id="panel">
+        <div class="container-fluid pt-3 d-flex justify-content-center">
+            <div class="card col-10 ">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <a href="#!" class="btn btn-outline-secondary">Send Coins</a>
+                            <a href="/user/mywallet" class="btn btn-outline-secondary">Recive Coins</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <!-- Address -->
+                        <h6 class="heading-small text-muted mb-4">Wallet address</h6>
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-address">Recipient</label>
+                                        <input id="input-address" class="form-control" placeholder="Home Address" value="Enter Address" type="text" name="reciver">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="drop-zone">
+                            <div class="card card-stats draggable" draggable="true">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col d-flex align-middle">
+                                            <div class="icon icon-shape text-white rounded-circle shadow bg-gradient-dark">
+                                                <i class="fab fa-bitcoin"></i>
+                                            </div>
+                                                <p class="ml-4 text-sm">
+                                                    <div class="text">
+                                                        <span class="h2 font-weight-bold">$65,600</span>
+                                                        <h5 class="text-uppercase text-muted">Hamaha wallet</h5>    
+                                                    </div>                   
+                                                </p>
+                                            </div>
+                                            <div class="">
+                                                <span class="d-block text-success mr-2">{{.Balance}} HMC</span>
+                                                <span class="text-nowrap d-flex justify-content-end text-muted mr-2">= {{.Balance}}$</span>                                 
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <div class="pl-2 row">
+                                <div class="col-5 lg-3 p-3">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-city">Amount</label>
+                                        <input type="text" id="input-city" class="form-control" placeholder="0.00" value="" name="amount">
+                                    </div>
+                                </div>
+                                <div class="col-5 lg-3 ml-auto p-3">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-country">USD</label>
+                                        <input type="text" id="input-country" class="form-control" placeholder="0.00" value="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pl-lg-2">
+                            <div class="form-group">
+                                <label class="form-control-label">Note</label>
+                                <textarea rows="4" class="form-control" placeholder="Optional message"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="text-right">
+                    <a href="#!" class="btn btn-md btn-primary">Pay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}

@@ -1,0 +1,398 @@
+{{define "content"}}
+    <div class="main-content" id="panel">
+        <div class="container-fluid pt-3 d-flex justify-content-center">
+            <div class="card col-10 ">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <a href="/user/wallet" class="btn btn-outline-secondary">Send Coins</a>
+                            <a href="#!" class="btn btn-outline-secondary">Recive Coins</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <!-- Address -->
+                        <h6 class="heading-small text-muted mb-4">Wallet address</h6>
+                         <div class="container-fluid p-0">
+                            <div class="card flex-fill w-100">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Recent Movement</h5>
+                                </div>
+                                <div class="card-body py-3">
+                                    <div class="chart chart-sm">
+                                        <div class="chartjs-size-monitor">
+                                            <div class="chartjs-size-monitor-expand">
+                                                <div class=""></div>
+                                            </div>
+                                            <div class="chartjs-size-monitor-shrink">
+                                                <div class=""></div>
+                                            </div>
+                                        </div>
+                                        <div class="chartjs-size-monitor">
+                                            <div class="chartjs-size-monitor-expand">
+                                                <div class=""></div>
+                                            </div>
+                                            <div class="chartjs-size-monitor-shrink">
+                                                <div class=""></div>
+                                            </div>
+                                        </div>
+                                        <canvas id="chartjs-dashboard-line" style="display: block; height: 252px; width: 1222px;" width="1222" height="252" class="chartjs-render-monitor"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-address">Wallet</label>
+                                        <button id="copyButton" type="button" class="btn btn-outline-secondary ml-1 btn-sm" onclick="myFunction()">Copy</button>
+                                        <input id="input-address" class="form-control" value="{{.Address}}" type="text" name="reciver" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="drop-zone">
+                            <div class="card card-stats draggable" draggable="true">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col d-flex align-middle">
+                                            <div class="icon icon-shape text-white rounded-circle shadow bg-gradient-dark">
+                                                <i class="fab fa-bitcoin"></i>
+                                            </div>
+                                                <p class="ml-4 text-sm">
+                                                    <div class="text">
+                                                        <span class="h2 font-weight-bold">$65,600</span>
+                                                        <h5 class="text-uppercase text-muted">Hamaha wallet</h5>    
+                                                    </div>                   
+                                                </p>
+                                            </div>
+                                            <div class="">
+                                                <span class="d-block text-success mr-2">{{.Balance}} HMC</span>
+                                                <span class="text-nowrap d-flex justify-content-end text-muted mr-2">= {{.Balance}}$</span>                                 
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Scripts for flow -->
+<script src="https://demo-basic.adminkit.io/js/app.js"></script>
+
+<script>
+    if(document.getElementById("chartjs-dashboard-line")){
+    var ctx = document.getElementById("chartjs-dashboard-line").getContext("2d");
+            var gradient = ctx.createLinearGradient(0, 0, 0, 225);
+            gradient.addColorStop(0, "rgba(215, 227, 244, 1)");
+            gradient.addColorStop(1, "rgba(215, 227, 244, 0)");
+            // Line chart
+            new Chart(document.getElementById("chartjs-dashboard-line"), {
+                type: "line",
+                data: {
+                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                    datasets: [{
+                        label: "Sales ($)",
+                        fill: true,
+                        backgroundColor: gradient,
+                        borderColor: window.theme.primary,
+                        data: [
+                            2115,
+                            1562,
+                            1584,
+                            1892,
+                            1587,
+                            1923,
+                            2566,
+                            2448,
+                            2805,
+                            3438,
+                            2917,
+                            3327
+                        ]
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        intersect: false
+                    },
+                    hover: {
+                        intersect: true
+                    },
+                    plugins: {
+                        filler: {
+                            propagate: false
+                        }
+                    },
+                    scales: {
+                        xAxes: [{
+                            reverse: true,
+                            gridLines: {
+                                color: "rgba(0,0,0,0.0)"
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                stepSize: 1000
+                            },
+                            display: true,
+                            borderDash: [3, 3],
+                            gridLines: {
+                                color: "rgba(0,0,0,0.0)"
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+    
+    
+    if(document.getElementById("chartjs-dashboard-pie")){
+        new Chart(document.getElementById("chartjs-dashboard-pie"), {
+                type: "pie",
+                data: {
+                    labels: ["Chrome", "Firefox", "IE"],
+                    datasets: [{
+                        data: [4306, 3801, 1689],
+                        backgroundColor: [
+                            window.theme.primary,
+                            window.theme.warning,
+                            window.theme.danger
+                        ],
+                        borderWidth: 5
+                    }]
+                },
+                options: {
+                    responsive: !window.MSInputMethodContext,
+                    maintainAspectRatio: false,
+                    legend: {
+                        display: false
+                    },
+                    cutoutPercentage: 75
+                }
+            });
+        }
+    
+    
+        if(document.getElementById("chartjs-dashboard-bar")){
+            // Bar chart
+            new Chart(document.getElementById("chartjs-dashboard-bar"), {
+                type: "bar",
+                data: {
+                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                    datasets: [{
+                        label: "This year",
+                        backgroundColor: window.theme.primary,
+                        borderColor: window.theme.primary,
+                        hoverBackgroundColor: window.theme.primary,
+                        hoverBorderColor: window.theme.primary,
+                        data: [54, 67, 41, 55, 62, 45, 55, 73, 60, 76, 48, 79],
+                        barPercentage: .75,
+                        categoryPercentage: .5
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    legend: {
+                        display: false
+                    },
+                    scales: {
+                        yAxes: [{
+                            gridLines: {
+                                display: false
+                            },
+                            stacked: false,
+                            ticks: {
+                                stepSize: 20
+                            }
+                        }],
+                        xAxes: [{
+                            stacked: false,
+                            gridLines: {
+                                color: "transparent"
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+    
+    
+        if(document.getElementById("chartjs-dashboard-bar-dark")){
+                // Bar chart
+                new Chart(document.getElementById("chartjs-dashboard-bar-dark"), {
+                    type: "bar",
+                    data: {
+                        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                        datasets: [{
+                            label: "This year",
+                            backgroundColor: window.theme.primary,
+                            borderColor: window.theme.primary,
+                            hoverBackgroundColor: window.theme.primary,
+                            hoverBorderColor: window.theme.primary,
+                            data: [54, 67, 41, 55, 62, 45, 55, 73, 60, 76, 48, 79],
+                            barPercentage: .75,
+                            categoryPercentage: .5
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        legend: {
+                            display: false
+                        },
+                        scales: {
+                            yAxes: [{
+                                gridLines: {
+                                    display: false
+                                },
+                                stacked: false,
+                                ticks: {
+                                    stepSize: 20
+                                }
+                            }],
+                            xAxes: [{
+                                stacked: false,
+                                gridLines: {
+                                    color: "transparent"
+                                }
+                            }]
+                        }
+                    }
+                });
+        }
+    
+    
+        if(document.getElementById("chartjs-line")){
+        new Chart(document.getElementById("chartjs-line"), {
+                    type: "line",
+                    data: {
+                        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                        datasets: [{
+                            label: "Sales ($)",
+                            fill: true,
+                            backgroundColor: "transparent",
+                            borderColor: window.theme.primary,
+                            data: [2115, 1562, 1584, 1892, 1487, 2223, 2966, 2448, 2905, 3838, 2917, 3327]
+                        }, {
+                            label: "Orders",
+                            fill: true,
+                            backgroundColor: "transparent",
+                            borderColor: "#adb5bd",
+                            borderDash: [4, 4],
+                            data: [958, 724, 629, 883, 915, 1214, 1476, 1212, 1554, 2128, 1466, 1827]
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        legend: {
+                            display: false
+                        },
+                        tooltips: {
+                            intersect: false
+                        },
+                        hover: {
+                            intersect: true
+                        },
+                        plugins: {
+                            filler: {
+                                propagate: false
+                            }
+                        },
+                        scales: {
+                            xAxes: [{
+                                reverse: true,
+                                gridLines: {
+                                    color: "rgba(0,0,0,0.05)"
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    stepSize: 500
+                                },
+                                display: true,
+                                borderDash: [5, 5],
+                                gridLines: {
+                                    color: "rgba(0,0,0,0)",
+                                    fontColor: "#fff"
+                                }
+                            }]
+                        }
+                    }
+                });
+        }
+    
+        if(document.getElementById("chartjs-bar")){
+            new Chart(document.getElementById("chartjs-bar"), {
+                        type: "bar",
+                        data: {
+                            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                            datasets: [{
+                                label: "Last year",
+                                backgroundColor: window.theme.primary,
+                                borderColor: window.theme.primary,
+                                hoverBackgroundColor: window.theme.primary,
+                                hoverBorderColor: window.theme.primary,
+                                data: [54, 67, 41, 55, 62, 45, 55, 73, 60, 76, 48, 79],
+                                barPercentage: .75,
+                                categoryPercentage: .5
+                            }, {
+                                label: "This year",
+                                backgroundColor: "#dee2e6",
+                                borderColor: "#dee2e6",
+                                hoverBackgroundColor: "#dee2e6",
+                                hoverBorderColor: "#dee2e6",
+                                data: [69, 66, 24, 48, 52, 51, 44, 53, 62, 79, 51, 68],
+                                barPercentage: .75,
+                                categoryPercentage: .5
+                            }]
+                        },
+                        options: {
+                            maintainAspectRatio: false,
+                            legend: {
+                                display: false
+                            },
+                            scales: {
+                                yAxes: [{
+                                    gridLines: {
+                                        display: false
+                                    },
+                                    stacked: false,
+                                    ticks: {
+                                        stepSize: 20
+                                    }
+                                }],
+                                xAxes: [{
+                                    stacked: false,
+                                    gridLines: {
+                                        color: "transparent"
+                                    }
+                                }]
+                            }
+                        }
+                    });
+                }
+</script>
+
+<script>
+function myFunction() {
+  // Get the text field
+  var copyText = document.getElementById("input-address");
+
+  // Select the text field
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); // For mobile devices
+
+   // Copy the text inside the text field
+  navigator.clipboard.writeText(copyText.value);
+}
+</script>
+
+{{end}}
