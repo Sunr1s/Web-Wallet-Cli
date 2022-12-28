@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strings"
 	"time"
 
+	trx "github.com/Sunr1s/webclient"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -21,6 +23,7 @@ type Page struct {
 	Address  string
 	Id       int
 	Balance  int
+	Error    string
 }
 
 func mainPage(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +39,7 @@ func mainPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	Id, Username = getUser(r.Context())
-	p := Page{"Wellcome", Username, "", Id, 0}
+	p := Page{"Wellcome", Username, "", Id, 0, ""}
 
 	err = t.Execute(w, p)
 	if err != nil {
@@ -57,13 +60,14 @@ func (h *Handler) walletPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Println(data.Client.Address())
+
 	Balance := h.services.Client.ClientBalance(data.Client.Address())
 	if Balance < 0 {
 		log.Error("error conntect to any node's")
 		Balance = 0
 	}
 
-	p := Page{"Wallet", Username, "", Id, Balance}
+	p := Page{"Wallet", Username, "", Id, Balance, data.Error}
 
 	err = t.Execute(w, p)
 
@@ -73,7 +77,33 @@ func (h *Handler) walletPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) mywalletPage(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) walletSubmit(w http.ResponseWriter, r *http.Request) {
+
+	input := trx.Transaction{
+		Reciver: r.FormValue("reciver"),
+		Value:   r.FormValue("amount"),
+		Message: r.FormValue("message"),
+		Sender:  data.Client.Address(),
+	}
+
+	out := h.services.Client.ChainTX(input.Value, input.Reciver, data.Client)
+
+	log.Println(out)
+
+	if out == "" || strings.Contains(out, "fail") {
+		data.Error = out
+		http.Redirect(w, r, "/user/wallet", 303)
+	} else {
+		id, err := h.services.Transaction.SaveTx(input)
+		if id == 0 || err != nil {
+			data.Error = err.Error()
+			http.Redirect(w, r, "/user/wallet", 303)
+		}
+		http.Redirect(w, r, "/user/wallet", 303)
+	}
+}
+
+func (h *Handler) myWalletPage(w http.ResponseWriter, r *http.Request) {
 
 	t, err := template.ParseFiles(TMPL_PATH+"base.gohtml",
 		TMPL_PATH+"topbar.gohtml",
@@ -93,7 +123,7 @@ func (h *Handler) mywalletPage(w http.ResponseWriter, r *http.Request) {
 		Balance = 0
 	}
 
-	p := Page{"Wallet", Username, Address, Id, Balance}
+	p := Page{"Wallet", Username, Address, Id, Balance, ""}
 
 	err = t.Execute(w, p)
 

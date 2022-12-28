@@ -9,12 +9,14 @@ import (
 type Service struct {
 	Authorization
 	Client
+	Transaction
 }
 
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),
 		Client:        NewClientService(repos.Client),
+		Transaction:   NewTxService(repos.Transaction),
 	}
 }
 
@@ -27,4 +29,9 @@ type Authorization interface {
 type Client interface {
 	ClientBalance(useraddr string) int
 	LoadClient(Id int) *blockchain.User
+	ChainTX(spend, address string, User *blockchain.User) string
+}
+
+type Transaction interface {
+	SaveTx(tx s_user.Transaction) (int, error)
 }

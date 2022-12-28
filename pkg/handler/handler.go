@@ -43,8 +43,11 @@ func (h *Handler) InitRouter() *chi.Mux {
 	r.Route("/user", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(h.userIdentity)
+
 			r.Get("/wallet", h.walletPage)
-			r.Get("/mywallet", h.mywalletPage)
+			r.Post("/walletSubmit", h.walletSubmit)
+
+			r.Get("/mywallet", h.myWalletPage)
 			r.Get("/logout", h.logout)
 		})
 	})

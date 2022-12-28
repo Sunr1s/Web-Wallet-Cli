@@ -53,7 +53,6 @@ func (h *Handler) loginPage(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) loginSubmit(w http.ResponseWriter, r *http.Request) {
 
-	//privkey := r.FormValue("privkey")
 	token, err := h.services.Authorization.GenerateToken(
 		r.FormValue("username"),
 		r.FormValue("password"))
@@ -99,12 +98,12 @@ func (h *Handler) singUpPage(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) singUpSubmit(w http.ResponseWriter, r *http.Request) {
 
-	var input s_user.User
 	var buf bytes.Buffer
-
-	input.Username = r.FormValue("username")
-	input.Password = r.FormValue("password")
-	input.Email = r.FormValue("email")
+	input := s_user.User{
+		Username: r.FormValue("username"),
+		Password: r.FormValue("password"),
+		Email:    r.FormValue("email"),
+	}
 
 	file, _, _ := r.FormFile("wallet")
 

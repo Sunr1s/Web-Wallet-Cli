@@ -17,8 +17,13 @@ type Client interface {
 	ReadFile(filename string) string
 }
 
+type Transaction interface {
+	SaveTx(tx s_user.Transaction) (int, error)
+}
+
 type Repository struct {
 	Authorization
+	Transaction
 	Client
 }
 
@@ -26,5 +31,6 @@ func NewRepository(db *sql.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthSqlite(db),
 		Client:        NewAuthSqlite(db),
+		Transaction:   NewTxSqlite(db),
 	}
 }
