@@ -16,6 +16,7 @@ func main() {
 	if err := initConfig(); err != nil {
 		log.Fatalf("error initialization configs: %s", err.Error())
 	}
+	nodes := viper.GetStringSlice("node.port")
 
 	db, err := repository.NewSqlite3DB(repository.Config{
 		Host:   viper.GetString("db.host"),
@@ -27,7 +28,7 @@ func main() {
 	}
 
 	repos := repository.NewRepository(db)
-	services := service.NewService(repos)
+	services := service.NewService(repos, nodes)
 	handlers := handler.NewHandler(services)
 
 	log.Println("Server is running ...")

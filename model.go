@@ -9,9 +9,11 @@ type User struct {
 }
 
 type Transaction struct {
-	Id      int
-	Reciver string
-	Sender  string
-	Value   string
-	Message string
+	Id        int
+	Reciver   string
+	Sender    string
+	S_Reciver string
+	S_Sender  string
+	Value     string
+	Message   string
 }

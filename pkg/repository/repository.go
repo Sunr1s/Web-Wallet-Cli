@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	s_user "github.com/Sunr1s/webclient"
+	trx "github.com/Sunr1s/webclient"
 	bc "github.com/Sunr1s/webclient/pkg/blockchain"
 )
 
@@ -19,6 +20,7 @@ type Client interface {
 
 type Transaction interface {
 	SaveTx(tx s_user.Transaction) (int, error)
+	GetTx(UserKey string) ([]trx.Transaction, error)
 }
 
 type Repository struct {

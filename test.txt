@@ -1,0 +1,52 @@
+ 
+[1] => {
+        "CurrHash": "R0VORVNJUy1CTE9DSw==",
+        "PrevHash": null,
+        "Nonce": 0,
+        "Difficulty": 0,
+        "Miner": "MEgCQQDfRHzy7nQ/raQZwraULn5irQ77ZFVHUHooraJIn9tpa8nP8x2SreNPOhJ8k4iwjnmtSenGm5Tf/zuV2cprbHyjAgMBAAE=",
+        "Signature": null,
+        "TimeStamp": "2023-01-08T12:07:30+02:00",
+        "Transactions": null,
+        "Mapping": {
+                "MEgCQQDfRHzy7nQ/raQZwraULn5irQ77ZFVHUHooraJIn9tpa8nP8x2SreNPOhJ8k4iwjnmtSenGm5Tf/zuV2cprbHyjAgMBAAE=": 100,
+                "STORAGE-CHAIN": 100
+        }
+}
+[2] => {
+        "CurrHash": "C37JJsgHBr2wRjZiGEy0fiH5opfQ/o9P0EqwWTQSQC8=",
+        "PrevHash": "R0VORVNJUy1CTE9DSw==",
+        "Nonce": 233643804,
+        "Difficulty": 20,
+        "Miner": "MEgCQQDfRHzy7nQ/raQZwraULn5irQ77ZFVHUHooraJIn9tpa8nP8x2SreNPOhJ8k4iwjnmtSenGm5Tf/zuV2cprbHyjAgMBAAE=",
+        "Signature": "rUpwKo+qaMDyFa0KfCoFdjQBSaW1nnP9dRW5dWaRcYnXOasawv+pbe7aNG+0o/k5h7AgzjSPbgjIVs1PBMDJLg==",
+        "TimeStamp": "2023-01-08T12:07:48+02:00",
+        "Transactions": [
+                {
+                        "RandBytes": "3aHmRwNmBBsB7CKrj5iV4KXzJ0AvX7Dhbi/0TyEZhAQ=",
+                        "PrevBlock": "R0VORVNJUy1CTE9DSw==",
+                        "Sender": "MEgCQQDfRHzy7nQ/raQZwraULn5irQ77ZFVHUHooraJIn9tpa8nP8x2SreNPOhJ8k4iwjnmtSenGm5Tf/zuV2cprbHyjAgMBAAE=",
+                        "Reciver": "eee",
+                        "Value": 3,
+                        "ToStorage": 0,
+                        "CurrHash": "Jjy9sLPR5d9QFWd4HmkyvkmK86KXIO4u+xMYljpe2Eo=",
+                        "Signature": "fFYaJS1qZF2bm4N0rwn5+oarH3S8ZeKTPncySsxxc3aGui1T/k5TO9/Fhb1egC3jpxJtHd7QOG66nilgy24qYA=="
+                },
+                {
+                        "RandBytes": "kQrJwjAUYuN5BP4F8q81HkwrYOawWAQbAGeQuc1TAMM=",
+                        "PrevBlock": "R0VORVNJUy1CTE9DSw==",
+                        "Sender": "MEgCQQDfRHzy7nQ/raQZwraULn5irQ77ZFVHUHooraJIn9tpa8nP8x2SreNPOhJ8k4iwjnmtSenGm5Tf/zuV2cprbHyjAgMBAAE=",
+                        "Reciver": "qqq",
+                        "Value": 1,
+                        "ToStorage": 0,
+                        "CurrHash": "xqux7igzOv1mmpQtemLKn8XbCVY8MdMiONvXgb3MYHM=",
+                        "Signature": "kbrGCWzdKItmekDxLCdzUUk9/yzgSa+A2KHlsBMHEhKzqmEB6cEk1k/2Q3woT5Bwjk5PuSB4Teu7YBX2MzsdTw=="
+                }
+        ],
+        "Mapping": {
+                "MEgCQQDfRHzy7nQ/raQZwraULn5irQ77ZFVHUHooraJIn9tpa8nP8x2SreNPOhJ8k4iwjnmtSenGm5Tf/zuV2cprbHyjAgMBAAE=": 96,
+                "STORAGE-CHAIN": 100,
+                "eee": 3,
+                "qqq": 1
+        }
+}

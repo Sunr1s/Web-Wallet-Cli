@@ -12,10 +12,10 @@ type Service struct {
 	Transaction
 }
 
-func NewService(repos *repository.Repository) *Service {
+func NewService(repos *repository.Repository, nodes []string) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),
-		Client:        NewClientService(repos.Client),
+		Client:        NewClientService(repos.Client, nodes),
 		Transaction:   NewTxService(repos.Transaction),
 	}
 }
@@ -34,4 +34,5 @@ type Client interface {
 
 type Transaction interface {
 	SaveTx(tx s_user.Transaction) (int, error)
+	GetTx(UserKey string) ([]s_user.Transaction, error)
 }

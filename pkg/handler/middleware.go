@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/Sunr1s/webclient/pkg/blockchain"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 )
@@ -34,11 +35,12 @@ func (h *Handler) userIdentity(next http.Handler) http.Handler {
 
 		UserId, UserName, err := h.services.Authorization.ParseToken(header)
 
-		data.Client = h.services.Client.LoadClient(UserId)
+		Client := h.services.Client.LoadClient(UserId)
 
 		newCtx := context.WithValue(r.Context(), userCtx, &tokenClaims{
 			UserId:   UserId,
 			UserName: UserName,
+			Client:   Client,
 		})
 
 		r = r.WithContext(newCtx)
@@ -71,9 +73,12 @@ func (h *Handler) pageIdentity(next http.Handler) http.Handler {
 			}
 
 			UserId, UserName, err := h.services.Authorization.ParseToken(header)
+			Client := h.services.Client.LoadClient(UserId)
+
 			newCtx = context.WithValue(r.Context(), userCtx, &tokenClaims{
 				UserId:   UserId,
 				UserName: UserName,
+				Client:   Client,
 			})
 
 			if err != nil {
@@ -86,7 +91,7 @@ func (h *Handler) pageIdentity(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
-func getUser(ctx context.Context) (int, string) {
+func getUser(ctx context.Context) (int, string, *blockchain.User) {
 	raw := ctx.Value(userCtx).(*tokenClaims)
-	return raw.UserId, raw.UserName
+	return raw.UserId, raw.UserName, raw.Client
 }

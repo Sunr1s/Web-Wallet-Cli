@@ -19,13 +19,13 @@ type tokenClaims struct {
 	jwt.StandardClaims
 	UserId   int
 	UserName string
+	Client   *blockchain.User
 }
 
 var data struct {
 	Error    string
 	Username string
 	Id       int
-	Client   *blockchain.User
 }
 
 func (h *Handler) loginPage(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +60,7 @@ func (h *Handler) loginSubmit(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Error(err)
 		data.Error = err.Error()
-		http.Redirect(w, r, login, 303)
+		http.Redirect(w, r, login, http.StatusSeeOther)
 	} else {
 		log.Println(token)
 
@@ -110,14 +110,14 @@ func (h *Handler) singUpSubmit(w http.ResponseWriter, r *http.Request) {
 	if r.FormValue("password") != r.FormValue("password_check") {
 		data.Error = "Passwords doesn't match"
 		log.Error(data.Error)
-		http.Redirect(w, r, "/auth/register", 303)
+		http.Redirect(w, r, "/auth/register", http.StatusSeeOther)
 	}
 
 	io.Copy(&buf, file)
 	if buf.String() == "" {
 		data.Error = "Error while parsing wallet"
 		log.Error(data.Error)
-		http.Redirect(w, r, "/auth/register", 303)
+		http.Redirect(w, r, "/auth/register", http.StatusSeeOther)
 	} else {
 		input.Wallet = buf.String()
 	}
@@ -128,13 +128,13 @@ func (h *Handler) singUpSubmit(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		data.Error = err.Error()
-		http.Redirect(w, r, "/auth/register", 303)
+		http.Redirect(w, r, "/auth/register", http.StatusSeeOther)
 	}
 
 	if err != nil {
 		log.Error("Create user error")
 		data.Error = err.Error()
-		http.Redirect(w, r, "/auth/register", 303)
+		http.Redirect(w, r, "/auth/register", http.StatusSeeOther)
 	}
 
 	log.Println("New user with id %d", id)

@@ -53,7 +53,9 @@ func (h *Handler) InitRouter() *chi.Mux {
 	})
 	r.Group(func(r chi.Router) {
 		r.Use(h.pageIdentity)
-		r.Get("/", mainPage)
+
+		r.Get("/explorer", h.explorerPage)
+		r.Get("/", h.mainPage)
 	})
 
 	return r

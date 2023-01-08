@@ -3,3 +3,7 @@ port: "8083"
 db:
     host: "sqlite3"
     dbname: "../user.db"
+
+node: 
+    port: [":8088",":9099"]
+    

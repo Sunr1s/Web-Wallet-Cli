@@ -13,11 +13,12 @@ import (
 )
 
 type ClientService struct {
-	repo repository.Client
+	repo  repository.Client
+	nodes []string
 }
 
-func NewClientService(repo repository.Client) *ClientService {
-	return &ClientService{repo: repo}
+func NewClientService(repo repository.Client, nodes []string) *ClientService {
+	return &ClientService{repo: repo, nodes: nodes}
 }
 
 func (c *ClientService) LoadClient(Id int) *blockchain.User {
@@ -30,7 +31,7 @@ func (c *ClientService) ClientBalance(useraddr string) int {
 		balance int
 		err     error
 	)
-	repository.Address = []string{":8088", "9099"}
+	repository.Address = c.nodes
 
 	for _, addr := range repository.Address {
 		res := nt.Send(addr, &nt.Package{
@@ -41,6 +42,7 @@ func (c *ClientService) ClientBalance(useraddr string) int {
 			return -1
 		}
 		balance, err = strconv.Atoi(res.Data)
+
 		if err != nil && balance == 0 {
 			return -1
 		} else {
@@ -53,7 +55,7 @@ func (c *ClientService) ClientBalance(useraddr string) int {
 func (c *ClientService) ChainTX(spend, address string, User *blockchain.User) string {
 
 	var ret string = ""
-	repository.Address = []string{":8088", "9099"}
+	repository.Address = c.nodes
 	num, err := strconv.Atoi(spend)
 
 	if err != nil {
