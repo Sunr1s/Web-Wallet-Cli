@@ -55,13 +55,13 @@
                                 <div class="col-5 lg-3 p-3">
                                     <div class="form-group">
                                         <label class="form-control-label" for="input-city">Amount</label>
-                                        <input type="text" id="input-city" class="form-control" placeholder="0.00" value="" name="amount">
+                                        <input type="text" id="input-amount" class="form-control" placeholder="0.00" value="" name="amount">
                                     </div>
                                 </div>
                                 <div class="col-5 lg-3 ml-auto p-3">
                                     <div class="form-group">
                                         <label class="form-control-label" for="input-country">USD</label>
-                                        <input type="text" id="input-country" class="form-control" placeholder="0.00" value="">
+                                        <input type="text" id="input-USD" class="form-control" placeholder="0.00" value="">
                                     </div>
                                 </div>
                             </div>
@@ -80,4 +80,16 @@
             </div>
         </div>
     </div>
+
+<script>
+    document.getElementById("input-amount").addEventListener("input", e => {
+        let money = e.target.value;
+        document.getElementById("input-USD").placeholder = money * 2;
+    })
+    document.getElementById("input-USD").addEventListener("input", e => {
+        let money = e.target.value;
+        document.getElementById("input-amount").placeholder = money * 2;
+    })
+
+</script>
 {{end}}

@@ -48,7 +48,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="form-control-label" for="input-address">Wallet</label>
-                                        <button id="copyButton" type="button" class="btn btn-outline-secondary ml-1 btn-sm" onclick="myFunction()">Copy</button>
+                                        <button id="copyButton" type="button" class="btn btn-outline-secondary ml-1 btn-sm" onclick="Copy()">Copy</button>
                                         <input id="input-address" class="form-control" value="{{.Address}}" type="text" name="reciver" disabled>
                                     </div>
                                 </div>
@@ -383,7 +383,7 @@
 </script>
 
 <script>
-function myFunction() {
+function Copy() {
   // Get the text field
   var copyText = document.getElementById("input-address");
 

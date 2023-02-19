@@ -40,6 +40,7 @@ func (h *Handler) InitRouter() *chi.Mux {
 		r.Get("/register", h.singUpPage)
 		r.Post("/reg-submit", h.singUpSubmit)
 	})
+
 	r.Route("/user", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(h.userIdentity)
@@ -47,14 +48,16 @@ func (h *Handler) InitRouter() *chi.Mux {
 			r.Get("/wallet", h.walletPage)
 			r.Post("/walletSubmit", h.walletSubmit)
 
+			r.Get("/explorer", h.explorerPage)
+
 			r.Get("/mywallet", h.myWalletPage)
 			r.Get("/logout", h.logout)
 		})
 	})
+
 	r.Group(func(r chi.Router) {
 		r.Use(h.pageIdentity)
 
-		r.Get("/explorer", h.explorerPage)
 		r.Get("/", h.mainPage)
 	})
 

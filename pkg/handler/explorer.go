@@ -5,10 +5,20 @@ import (
 	"html/template"
 	"net/http"
 
+	model "github.com/Sunr1s/webclient"
 	log "github.com/sirupsen/logrus"
 )
 
+type Explorer struct {
+	Title    string
+	Username string
+	Chain    []model.Block
+	Trx      []model.BlockTransaction
+}
+
 func (h *Handler) explorerPage(w http.ResponseWriter, r *http.Request) {
+
+	var tx []model.BlockTransaction
 
 	t, err := template.ParseFiles(TMPL_PATH+"base.gohtml",
 		TMPL_PATH+"topbar.gohtml",
@@ -20,20 +30,31 @@ func (h *Handler) explorerPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Id, Username, Client := getUser(r.Context())
+	blocks := h.services.Explorer.GetBlockChain(":8088")
 
-	log.Print(Client)
+	for j := range blocks {
+		for i := range blocks[j].Transaction {
+			tx = append(tx, blocks[j].Transaction[i])
+		}
+	}
+
+	_, Username, _ := getUser(r.Context())
 
 	if err != nil {
 		log.Error(err)
 	}
 
-	p := Page{"Wellcome", Username, "", Id, 0, "", nil}
+	if len(tx) > 7 {
+		tx = tx[:7]
+	}
 
+	p := Explorer{"Wellcome", Username, blocks, tx}
+
+	//blocks[0].Transactions.
 	err = t.Execute(w, p)
 
 	if err != nil {
-		fmt.Println("Error while executing template")
+		fmt.Println("Error while executing template" + err.Error())
 		return
 	}
 }

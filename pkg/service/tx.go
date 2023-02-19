@@ -25,6 +25,11 @@ func (t *TxService) GetTx(UserKey string) ([]trx.Transaction, error) {
 	for i := len(txs) - 1; i >= 0; i-- {
 		reverse = append(reverse, txs[i])
 	}
+	for i := range reverse {
+		reverse[i].S_Sender = reverse[i].Sender[10:14] + "-" + reverse[i].Sender[len(reverse[i].Sender)-16:len(reverse[i].Sender)-12]
+		reverse[i].S_Reciver = reverse[i].Reciver[10:14] + "-" + reverse[i].Reciver[len(reverse[i].Reciver)-16:len(reverse[i].Sender)-12]
+	}
+
 	if reverse != nil {
 		if len(reverse) > 7 {
 			return reverse[:7], err

@@ -23,10 +23,15 @@ type Transaction interface {
 	GetTx(UserKey string) ([]trx.Transaction, error)
 }
 
+type Explorer interface {
+	GetChain(node string) []*bc.Block
+}
+
 type Repository struct {
 	Authorization
 	Transaction
 	Client
+	Explorer
 }
 
 func NewRepository(db *sql.DB) *Repository {
@@ -34,5 +39,6 @@ func NewRepository(db *sql.DB) *Repository {
 		Authorization: NewAuthSqlite(db),
 		Client:        NewAuthSqlite(db),
 		Transaction:   NewTxSqlite(db),
+		Explorer:      NewExplorerSqlite(db),
 	}
 }

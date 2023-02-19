@@ -17,3 +17,21 @@ type Transaction struct {
 	Value     string
 	Message   string
 }
+
+type Block struct {
+	Height      uint32
+	CurrHash    string
+	CurrHashSrt string
+	Miner       string
+	MinerSrt    string
+	TimeStamp   string
+	Output      uint64
+	Transaction []BlockTransaction
+}
+
+type BlockTransaction struct {
+	CurrHash    string
+	CurrHashSrt string
+	Output      uint64
+	TimeStamp   string
+}

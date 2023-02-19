@@ -53,11 +53,6 @@ func (h *Handler) mainPage(w http.ResponseWriter, r *http.Request) {
 		log.Error(err)
 	}
 
-	for i := range tx {
-		tx[i].S_Sender = tx[i].Sender[10:14] + "-" + tx[i].Sender[len(tx[i].Sender)-16:len(tx[i].Sender)-12]
-		tx[i].S_Reciver = tx[i].Reciver[10:14] + "-" + tx[i].Reciver[len(tx[i].Reciver)-16:len(tx[i].Sender)-12]
-	}
-
 	p := Page{"Wellcome", Username, "", Id, 0, "", tx}
 
 	err = t.Execute(w, p)
