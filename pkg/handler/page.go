@@ -63,7 +63,7 @@ func (h *Handler) mainPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) walletPage(w http.ResponseWriter, r *http.Request) {
-
+	userData := &userData{} // create userData instance
 	t, err := template.ParseFiles(TMPL_PATH+"base.gohtml",
 		TMPL_PATH+"topbar.gohtml",
 		TMPL_PATH+"footer.gohtml",
@@ -75,14 +75,14 @@ func (h *Handler) walletPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	Id, Username, Client := getUser(r.Context())
-	Balance := h.services.Client.ClientBalance(Client.Address())
+	Balance, err := h.services.Client.ClientBalance(Client.Address())
 
 	if Balance < 0 {
 		log.Error("error conntect to any node's")
 		Balance = 0
 	}
 
-	p := Page{"Wallet", Username, "", Id, Balance, data.Error, nil}
+	p := Page{"Wallet", Username, "", Id, Balance, userData.Error, nil}
 	err = t.Execute(w, p)
 
 	if err != nil {
@@ -92,7 +92,6 @@ func (h *Handler) walletPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) walletSubmit(w http.ResponseWriter, r *http.Request) {
-
 	_, _, Client := getUser(r.Context())
 
 	input := trx.Transaction{
@@ -102,17 +101,19 @@ func (h *Handler) walletSubmit(w http.ResponseWriter, r *http.Request) {
 		Sender:  Client.Address(),
 	}
 
-	out := h.services.Client.ChainTX(input.Value, input.Reciver, Client)
+	data := &userData{} // create userData instance
 
-	log.Println(out)
+	out, err := h.services.Client.ChainTX(input.Value, input.Reciver, Client)
+
+	log.Println(out, err)
 
 	if out == "" || strings.Contains(out, "fail") {
-		data.Error = out
+		data.Error = out // modify data.Error instead of userData.Error
 		http.Redirect(w, r, "/user/wallet", http.StatusSeeOther)
 	} else {
 		id, err := h.services.Transaction.SaveTx(input)
 		if id == 0 || err != nil {
-			data.Error = err.Error()
+			data.Error = err.Error() // modify data.Error instead of userData.Error
 			http.Redirect(w, r, "/user/wallet", http.StatusSeeOther)
 		}
 		http.Redirect(w, r, "/user/wallet", http.StatusSeeOther)
@@ -133,7 +134,7 @@ func (h *Handler) myWalletPage(w http.ResponseWriter, r *http.Request) {
 
 	Id, Username, Client := getUser(r.Context())
 
-	Balance := h.services.Client.ClientBalance(Client.Address())
+	Balance, err := h.services.Client.ClientBalance(Client.Address())
 	Address := Client.Address()
 
 	if Balance < 0 {

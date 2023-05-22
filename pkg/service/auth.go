@@ -6,9 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	s_user "github.com/Sunr1s/webclient"
+	model "github.com/Sunr1s/webclient"
 	"github.com/Sunr1s/webclient/pkg/repository"
-
 	"github.com/golang-jwt/jwt"
 )
 
@@ -18,66 +17,74 @@ const (
 	tokenTTL   = 12 * time.Hour
 )
 
-type tokenClaims struct {
+// Claims defines the structure of the JWT claims
+type Claims struct {
 	jwt.StandardClaims
-	UserId   int    `json:"user_id"`
+	UserID   int    `json:"user_id"`
 	Username string `json:"username"`
 }
 
+// AuthService handles operations related to authorization
 type AuthService struct {
 	repo repository.Authorization
 }
 
+// NewAuthService initializes a new AuthService
 func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
 }
 
-func (s *AuthService) CreateUser(user s_user.User) (int, error) {
-	user.Password = generatePasswordHash(user.Password)
-	return s.repo.CreateUser(user)
+// RegisterUser registers a new user in the system
+func (s *AuthService) RegisterUser(user model.User) (int, error) {
+	user.Password = hashPassword(user.Password)
+	return s.repo.RegisterUser(user)
 }
 
+// GenerateToken generates a new JWT token for a user
 func (s *AuthService) GenerateToken(username, password string) (string, error) {
-	user, err := s.repo.GetUser(username, generatePasswordHash(password))
+	user, err := s.repo.GetUser(username, hashPassword(password))
 	if err != nil {
 		return "", err
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
-		jwt.StandardClaims{
+	claims := &Claims{
+		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(tokenTTL).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
-		user.Id,
-		user.Username,
-	})
+		UserID:   user.Id,
+		Username: user.Username,
+	}
 
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(signingKey))
 }
 
+// ParseToken parses a JWT token and returns the user details
 func (s *AuthService) ParseToken(accessToken string) (int, string, error) {
-	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(accessToken, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("invalid signing method")
+			return nil, fmt.Errorf("invalid signing method")
 		}
 
 		return []byte(signingKey), nil
 	})
+
 	if err != nil {
 		return 0, "", err
 	}
 
-	claims, ok := token.Claims.(*tokenClaims)
+	claims, ok := token.Claims.(*Claims)
 	if !ok {
-		return 0, "", errors.New("token claims are not of type *tokenClaims")
+		return 0, "", errors.New("token claims are not of expected type")
 	}
 
-	return claims.UserId, claims.Username, nil
+	return claims.UserID, claims.Username, nil
 }
 
-func generatePasswordHash(password string) string {
+// hashPassword hashes a password with a salt
+func hashPassword(password string) string {
 	hash := sha1.New()
 	hash.Write([]byte(password))
-
 	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
 }

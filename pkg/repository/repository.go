@@ -9,7 +9,7 @@ import (
 )
 
 type Authorization interface {
-	CreateUser(user s_user.User) (int, error)
+	RegisterUser(user s_user.User) (int, error)
 	GetUser(username, password string) (s_user.User, error)
 }
 
@@ -24,7 +24,7 @@ type Transaction interface {
 }
 
 type Explorer interface {
-	GetChain(node string) []*bc.Block
+	GetChain(node string) ([]*bc.Block, error)
 }
 
 type Repository struct {
@@ -36,8 +36,8 @@ type Repository struct {
 
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{
-		Authorization: NewAuthSqlite(db),
-		Client:        NewAuthSqlite(db),
+		Authorization: NewSQLiteAuthRepository(db),
+		Client:        NewSQLiteAuthRepository(db),
 		Transaction:   NewTxSqlite(db),
 		Explorer:      NewExplorerSqlite(db),
 	}

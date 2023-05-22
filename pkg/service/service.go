@@ -24,15 +24,15 @@ func NewService(repos *repository.Repository, nodes []string) *Service {
 }
 
 type Authorization interface {
-	CreateUser(user s_user.User) (int, error)
+	RegisterUser(user model.User) (int, error)
 	GenerateToken(username, password string) (string, error)
 	ParseToken(token string) (int, string, error)
 }
 
 type Client interface {
-	ClientBalance(useraddr string) int
+	ClientBalance(userAddress string) (int, error)
 	LoadClient(Id int) *blockchain.User
-	ChainTX(spend, address string, User *blockchain.User) string
+	ChainTX(amount, recipientAddress string, user *blockchain.User) (string, error)
 }
 
 type Transaction interface {
@@ -41,5 +41,5 @@ type Transaction interface {
 }
 
 type Explorer interface {
-	GetBlockChain(node string) []model.Block
+	GetBlockChain(node string) ([]model.Block, error)
 }

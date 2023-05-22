@@ -8,21 +8,23 @@ import (
 	bc "github.com/Sunr1s/webclient/pkg/blockchain"
 )
 
-type AuthSqlite struct {
+// SQLiteAuthRepository encapsulates operations with SQLite database
+type SQLiteAuthRepository struct {
 	db *sql.DB
 }
 
-func NewAuthSqlite(db *sql.DB) *AuthSqlite {
-	return &AuthSqlite{db: db}
+// NewSQLiteAuthRepository initializes a new SQLiteAuthRepository
+func NewSQLiteAuthRepository(db *sql.DB) *SQLiteAuthRepository {
+	return &SQLiteAuthRepository{db: db}
 }
 
-func (r *AuthSqlite) CreateUser(user s_user.User) (int, error) {
-	var id int
-
+// RegisterUser inserts a new user into the database
+func (r *SQLiteAuthRepository) RegisterUser(user s_user.User) (int, error) {
 	query := fmt.Sprintf("INSERT INTO %s (Username, Password, Email, Wallet) values ($1, $2, $3, $4) RETURNING id", usersTable)
 
 	row := r.db.QueryRow(query, user.Username, user.Password, user.Email, user.Wallet)
 
+	var id int
 	if err := row.Scan(&id); err != nil {
 		return 0, err
 	}
@@ -30,29 +32,38 @@ func (r *AuthSqlite) CreateUser(user s_user.User) (int, error) {
 	return id, nil
 }
 
-func (r *AuthSqlite) GetUser(username, password string) (s_user.User, error) {
+// RetrieveUser fetches a user from the database based on username and password
+func (r *SQLiteAuthRepository) GetUser(username, password string) (s_user.User, error) {
+	query := "SELECT * FROM users WHERE Username = $1 AND Password = $2"
+	row := r.db.QueryRow(query, username, password)
+
 	var user s_user.User
-	row := r.db.QueryRow("SELECT * FROM users WHERE Username= $1 AND Password = $2;", username, password)
-	err := row.Scan(&user.Id, &user.Username, &user.Password, &user.Email, &user.Wallet)
-	return user, err
+	if err := row.Scan(&user.Id, &user.Username, &user.Password, &user.Email, &user.Wallet); err != nil {
+		return s_user.User{}, err
+	}
+
+	return user, nil
 }
 
-func (r *AuthSqlite) LoadClient(Id int) *bc.User {
+// LoadClient retrieves a user's wallet based on the user's id
+func (r *SQLiteAuthRepository) LoadClient(id int) *bc.User {
+	query := "SELECT Wallet FROM users WHERE Id = $1"
+	row := r.db.QueryRow(query, id)
+
 	var data string
-
-	row := r.db.QueryRow("SELECT Wallet FROM users WHERE Id = $1;", Id)
-	err := row.Scan(&data)
-
-	if err != nil {
+	if err := row.Scan(&data); err != nil {
 		return nil
 	}
-	priv := readKeys(data, true)
-	if priv == "" {
+
+	privKey := readKeys(data, true)
+	if privKey == "" {
 		return nil
 	}
-	user := bc.LoadUser(priv)
+
+	user := bc.LoadUser(privKey)
 	if user == nil {
 		return nil
 	}
+
 	return user
 }

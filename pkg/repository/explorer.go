@@ -8,6 +8,10 @@ import (
 	nt "github.com/Sunr1s/webclient/pkg/network"
 )
 
+const (
+	NodePort = ":8088"
+)
+
 type ExplorerSqlite struct {
 	db *sql.DB
 }
@@ -16,7 +20,7 @@ func NewExplorerSqlite(db *sql.DB) *ExplorerSqlite {
 	return &ExplorerSqlite{db: db}
 }
 
-func (e *ExplorerSqlite) GetChain(node string) []*bc.Block {
+func (e *ExplorerSqlite) GetChain(node string) ([]*bc.Block, error) {
 	var (
 		res    *nt.Package
 		blocks []*bc.Block
@@ -31,5 +35,5 @@ func (e *ExplorerSqlite) GetChain(node string) []*bc.Block {
 		}
 		blocks = append(blocks, bc.DeserializeBlock(res.Data))
 	}
-	return blocks
+	return blocks, nil
 }

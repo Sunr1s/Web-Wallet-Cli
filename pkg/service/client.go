@@ -2,9 +2,7 @@ package service
 
 import (
 	"fmt"
-	"log"
 	"strconv"
-	"strings"
 
 	"github.com/Sunr1s/webclient/pkg/blockchain"
 	bc "github.com/Sunr1s/webclient/pkg/blockchain"
@@ -21,70 +19,65 @@ func NewClientService(repo repository.Client, nodes []string) *ClientService {
 	return &ClientService{repo: repo, nodes: nodes}
 }
 
-func (c *ClientService) LoadClient(Id int) *blockchain.User {
-	Client := c.repo.LoadClient(Id)
-	return Client
+func (s *ClientService) LoadClient(clientID int) *blockchain.User {
+	return s.repo.LoadClient(clientID)
 }
 
-func (c *ClientService) ClientBalance(useraddr string) int {
-	var (
-		balance int
-		err     error
-	)
-	repository.Address = c.nodes
-
-	for _, addr := range repository.Address {
-		res := nt.Send(addr, &nt.Package{
-			Option: repository.GET_BLNCE,
-			Data:   useraddr,
-		})
-		if res == nil {
-			return -1
+func (s *ClientService) ClientBalance(userAddress string) (int, error) {
+	for _, nodeAddress := range s.nodes {
+		response := s.sendPackage(nodeAddress, repository.GET_BLNCE, userAddress)
+		if response == nil {
+			continue
 		}
-		balance, err = strconv.Atoi(res.Data)
-
-		if err != nil && balance == 0 {
-			return -1
-		} else {
-			return balance
+		balance, err := strconv.Atoi(response.Data)
+		if err != nil || balance == 0 {
+			continue
 		}
+		return balance, nil
 	}
-	return balance
+	return 0, fmt.Errorf("failed to retrieve balance for user %s", userAddress)
 }
 
-func (c *ClientService) ChainTX(spend, address string, User *blockchain.User) string {
-
-	var ret string = ""
-	repository.Address = c.nodes
-	num, err := strconv.Atoi(spend)
-
+func (s *ClientService) ChainTX(amount, recipientAddress string, user *blockchain.User) (string, error) {
+	value, err := strconv.Atoi(amount)
 	if err != nil {
-		log.Println("failed: strconv.Atoi(num)")
-		return "failed: strconv.Atoi(num)"
+		return "", fmt.Errorf("failed to convert amount to integer: %w", err)
 	}
 
-	for _, addr := range repository.Address {
-		res := nt.Send(addr, &nt.Package{
-			Option: repository.GET_LHASH,
-		})
-		if res == nil {
+	var result string
+	for _, nodeAddress := range s.nodes {
+		lastHashResponse := s.sendPackage(nodeAddress, repository.GET_LHASH, "")
+		if lastHashResponse == nil {
 			continue
 		}
-		tx := bc.NewTransaction(User, bc.Base64Decode(res.Data), address, uint64(num))
-		res = nt.Send(addr, &nt.Package{
-			Option: repository.ADD_TRNSX,
-			Data:   bc.SerializeTx(tx),
-		})
-		if res == nil {
+		lastHash, err := bc.Base64Decode(lastHashResponse.Data)
+		if err != nil {
 			continue
 		}
-		if res.Data == "ok" {
-			log.Printf("ok: (%s)\n", addr)
-			ret += "ok: " + addr
-		} else {
-			log.Printf("fail: (%s) (%s)\n", addr, strings.Split(res.Data, "="))
-			ret += fmt.Sprintf("fail: (%s) (%s)\n", addr, strings.Split(res.Data, "="))
+		transaction, err := bc.NewTransaction(user, lastHash, recipientAddress, uint64(value))
+		if err != nil {
+			continue
 		}
+		transactionData, err := bc.SerializeTx(transaction)
+		if err != nil {
+			continue
+		}
+		response := s.sendPackage(nodeAddress, repository.ADD_TRNSX, transactionData)
+		if response == nil || response.Data != "ok" {
+			result += fmt.Sprintf("failure at node %s: %s\n", nodeAddress, response.Data)
+			continue
+		}
+		result += fmt.Sprintf("success at node %s\n", nodeAddress)
 	}
-	return ret
+	if result == "" {
+		return "", fmt.Errorf("transaction failed at all nodes")
+	}
+	return result, nil
+}
+
+func (s *ClientService) sendPackage(address string, option int, data string) *nt.Package {
+	return nt.Send(address, &nt.Package{
+		Option: option,
+		Data:   data,
+	})
 }

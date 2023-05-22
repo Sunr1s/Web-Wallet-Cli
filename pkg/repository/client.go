@@ -91,7 +91,7 @@ func writeFile(foldername string, priv *rsa.PrivateKey, pub *rsa.PublicKey) erro
 	return ioutil.WriteFile(foldername+"/wallet.dat", file, 0644)
 }
 
-func (r *AuthSqlite) ReadFile(filename string) string {
+func (r *SQLiteAuthRepository) ReadFile(filename string) string {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return ""
@@ -111,7 +111,11 @@ func readKeys(data string, key bool) string {
 		return ""
 	}
 	if key {
-		return bc.StringPrivate(priv)
+		pkey, err := bc.StringPrivate(priv)
+		if err != nil {
+			return "err"
+		}
+		return pkey
 	} else {
 		return bc.StringPublic(pub)
 	}
