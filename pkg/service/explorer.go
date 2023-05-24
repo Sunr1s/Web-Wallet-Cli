@@ -33,7 +33,7 @@ func (service *ExplorerService) GetBlockChain(node string) ([]model.Block, error
 			return nil, fmt.Errorf("failed to convert block to model: %w", err)
 		}
 
-		modelBlocks[i] = modelBlock
+		modelBlocks[len(blocks)-1-i] = modelBlock
 	}
 
 	return modelBlocks, nil
@@ -41,16 +41,19 @@ func (service *ExplorerService) GetBlockChain(node string) ([]model.Block, error
 
 // blockToModel transforms a blockchain block to a model block.
 func (service *ExplorerService) blockToModel(block *bc.Block, height uint32) (model.Block, error) {
-	hash := bc.Base64Encode(block.CurrHash)
 
 	modelBlock := model.Block{
+		PrevHash:    bc.Base64Encode(block.PrevHash),
 		Height:      height,
-		CurrHash:    hash,
-		CurrHashSrt: formatHash(hash),
+		CurrHash:    bc.Base64Encode(block.CurrHash),
+		Nonce:       block.Nonce,
+		CurrHashSrt: formatHash(bc.Base64Encode(block.CurrHash)),
 		Miner:       block.Miner,
 		MinerSrt:    formatMiner(block.Miner),
-		TimeStamp:   block.TimeStamp,
+		TimeStamp:   convertTimestampToString(block.TimeStamp),
 		Output:      service.calculateTotalOutput(block.Transactions),
+		Difficulty:  block.Difficulty,
+		Signature:   bc.Base64Encode(block.Signature),
 	}
 
 	modelTransactions, err := service.transactionsToModel(block.Transactions, block)
@@ -78,6 +81,13 @@ func (service *ExplorerService) transactionsToModel(transactions []bc.Transactio
 			CurrHashSrt: formatHash(hash),
 			Output:      tx.Value,
 			TimeStamp:   convertTimestampToString(block.TimeStamp),
+			RandBytes:   bc.Base64Encode(tx.RandBytes),
+			PrevBlock:   bc.Base64Encode(tx.PrevBlock),
+			Sender:      tx.Sender,
+			Receiver:    tx.Receiver,
+			Value:       tx.Value,
+			ToStorage:   tx.ToStorage,
+			Signature:   bc.Base64Encode(tx.Signature),
 		}
 	}
 

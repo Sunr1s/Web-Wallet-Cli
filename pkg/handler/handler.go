@@ -52,12 +52,14 @@ func (h *Handler) InitRouter() *chi.Mux {
 		r.Get("/wallet", h.walletPage)
 		r.Post("/walletSubmit", h.walletSubmit)
 
-		r.Get("/explorer", h.explorerPage)
-
 		r.Get("/mywallet", h.myWalletPage)
 		r.Get("/logout", h.logout)
-	})
 
+		r.Route("/explorer", func(r chi.Router) {
+			r.Get("/", h.explorerPage)
+			r.Get("/allblocks", h.allBlocks)
+		})
+	})
 	r.Group(func(r chi.Router) {
 		r.Use(h.pageIdentity)
 

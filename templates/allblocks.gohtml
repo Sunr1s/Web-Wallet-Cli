@@ -1,0 +1,70 @@
+{{define "content"}}
+<div class="container-fluid pt-3">
+    <div class="row removable">
+        <div class="col-xl-12">
+            <div class="card shadow rounded">
+                <div class="card-header bg-transparent border-0">
+                    <h3 class="text-uppercase text-muted ls-1 mb-1">Blockchain Explorer</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="mb-3">Latest Blocks</h4>
+                    <div class="accordion" id="blockAccordion">
+                        {{range $index, $Block := .Chain}}
+                        <div class="card my-3 shadow-sm rounded">
+                            <div class="card-header" id="heading{{$index}}">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link text-decoration-none" type="button" data-toggle="collapse" data-target="#collapse{{$index}}" aria-expanded="true" aria-controls="collapse{{$index}}">
+                                        Block Hash: {{printf "%x" $Block.CurrHash}}
+                                    </button>
+                                </h2>
+                            </div>
+
+                            <div id="collapse{{$index}}" class="collapse" aria-labelledby="heading{{$index}}" data-parent="#blockAccordion">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <p class="text-break"><strong>Previous Hash:</strong> {{$Block.PrevHash}}</p>
+                                            <p class="text-break"><strong>Nonce:</strong> {{$Block.Nonce}}</p>
+                                            <p class="text-break"><strong>Difficulty:</strong> {{$Block.Difficulty}}</p>
+                                            <p class="text-break"><strong>Miner:</strong> <br>{{$Block.Miner}}</p>
+                                            <p class="text-break"><strong>Signature:</strong> <br>{{printf "%x" $Block.Signature}}</p>
+                                            <p class="text-break"><strong>Time Stamp:</strong> {{$Block.TimeStamp}}</p>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <p><strong>Transactions:</strong></p>
+                                            <div class="accordion" id="transactionAccordion{{$index}}">
+                                                {{range $tIndex, $Transaction := $Block.Transaction}}
+                                                <div class="card my-2 shadow-sm rounded">
+                                                    <div class="card-header" id="tHeading{{$tIndex}}">
+                                                        <h2 class="mb-0">
+                                                            <button class="btn btn-link text-decoration-none text-break" type="button" data-toggle="collapse" data-target="#tCollapse{{$tIndex}}" aria-expanded="true" aria-controls="tCollapse{{$tIndex}}">
+                                                                Transaction Hash: {{printf "%x" $Transaction.CurrHash}}
+                                                            </button>
+
+                                                        </h2>
+                                                    </div>
+
+                                                    <div id="tCollapse{{$tIndex}}" class="collapse" aria-labelledby="tHeading{{$tIndex}}" data-parent="#transactionAccordion{{$index}}">
+                                                        <div class="card-body">
+                                                            <p class="text-break"><strong>Sender:</strong> {{$Transaction.Sender}}</p>
+                                                            <p class="text-break"><strong>Receiver:</strong> {{$Transaction.Receiver}}</p>
+                                                            <p class="text-break"><strong>Value:</strong> {{$Transaction.Value}}</p>
+                                                            <p class="text-break"><strong>To Storage:</strong> {{$Transaction.ToStorage}}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {{end}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

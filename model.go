@@ -19,14 +19,18 @@ type Transaction struct {
 }
 
 type Block struct {
+	PrevHash    string
 	Height      uint32
 	CurrHash    string
+	Nonce       uint64
 	CurrHashSrt string
 	Miner       string
 	MinerSrt    string
 	TimeStamp   string
 	Output      uint64
 	Transaction []BlockTransaction
+	Difficulty  uint8
+	Signature   string
 }
 
 type BlockTransaction struct {
@@ -34,4 +38,11 @@ type BlockTransaction struct {
 	CurrHashSrt string
 	Output      uint64
 	TimeStamp   string
+	RandBytes   string
+	PrevBlock   string
+	Sender      string
+	Receiver    string
+	Value       uint64
+	ToStorage   uint64
+	Signature   string
 }

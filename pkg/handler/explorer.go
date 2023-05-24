@@ -22,6 +22,9 @@ func (h *Handler) explorerPage(w http.ResponseWriter, r *http.Request) {
 		log.Error("Error getting blockchain: ", err)
 		return
 	}
+	if len(blocks) > 7 {
+		blocks = blocks[:7]
+	}
 
 	var tx []model.BlockTransaction
 	for _, block := range blocks {
@@ -40,4 +43,21 @@ func (h *Handler) explorerPage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Error("Error executing template: ", err)
 	}
+}
+
+func (h *Handler) allBlocks(w http.ResponseWriter, r *http.Request) {
+	t := h.parseTemplates("base.gohtml", "topbar.gohtml", "footer.gohtml", "navbar.gohtml", "allblocks.gohtml")
+
+	blocks, err := h.services.Explorer.GetBlockChain(":8088")
+	if err != nil {
+		log.Error("Error getting blockchain: ", err)
+		return
+	}
+
+	p := Explorer{"Wellcome", Username, blocks, nil}
+	err = t.Execute(w, p)
+	if err != nil {
+		log.Error("Error executing template: ", err)
+	}
+
 }
